@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>たらこのダメ計</title>
+
+  <!-- TODO -->
+
+
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <header>
+    <h1>たらこのダメ計 ver1.0.0</h1>
+    <p>ポケモン第4世代のダメージ計算ツールです。</p>
+  </header>
+
+  <main>
+    <section id="tool" aria-label="ダメージ計算ツール">
+      <div id="assistance-tab-group" class="tab-group">
+        <div class="tab-buttons">
+          <button class="tab-button active" data-tab="assistance1">ポケモン1</button>
+          <button class="tab-button" data-tab="assistance2">ポケモン2</button>
+        </div>
+
+        <div id="assistance1" class="tab-content active">
+          <div class="grid">
+            <div class="autocomplete">
+              <label for="assistance1-pokemon-input">ポケモン</label>
+              <input id="assistance1-pokemon-input" class="assistance-pokemon-input" type="text"
+                placeholder="ポケモンを入力..." autocomplete="off" role="combobox" aria-autocomplete="list"
+                aria-controls="assistance1-pokemon-list" aria-expanded="false" />
+              <ul id="assistance1-pokemon-list" role="listbox" hidden></ul>
+            </div>
+
+            <label for="assistance1-level">レベル</label>
+            <input id="assistance1-level" class="assistance-level" type="number" min="1" max="100"
+              data-default-value="50">
+          </div>
+
+
+          <label>種族値: <span class="assistance-base-stats"></span></label>
+          <label>タイプ: <span class="assistance-types"></span></label>
+          <label>特性: <span class="assistance-abilities"></span></label>
+          <label>体重技威力: <span class="assistance-weight-move-power"></span></label>
+
+          <div class="assistance-stats">
+            <!-- レイアウト調整用の空のdiv -->
+            <div></div>
+            <label>個体値</label>
+            <label>努力値</label>
+            <label>性格</label>
+            <label>実数値</label>
+
+            <label>H</label>
+            <input class="assistance-iv-hp" type="number" min="0" max="31" data-default-value="31">
+            <input class="assistance-ev-hp" type="number" min="0" max="252" step="4" data-default-value="0">
+            <label>＋　－</label>
+            <input class="assistance-stat-hp" type="number" min="1" max="999" value="1" autocomplete="off">
+
+            <label>A</label>
+            <input class="assistance-iv-atk" type="number" min="0" max="31" data-default-value="31">
+            <input class="assistance-ev-atk" type="number" min="0" max="252" step="4" data-default-value="0">
+            <div>
+              <input class="assistance-nature-plus-atk" type="checkbox" autocomplete="off">
+              <input class="assistance-nature-minus-atk" type="checkbox" autocomplete="off">
+            </div>
+            <input class="assistance-stat-atk" type="number" min="1" max="999" value="1" autocomplete="off">
+
+            <label>B</label>
+            <input class="assistance-iv-def" type="number" min="0" max="31" data-default-value="31">
+            <input class="assistance-ev-def" type="number" min="0" max="252" step="4" data-default-value="0">
+            <div>
+              <input class="assistance-nature-plus-def" type="checkbox" autocomplete="off">
+              <input class="assistance-nature-minus-def" type="checkbox" autocomplete="off">
+            </div>
+            <input class="assistance-stat-def" type="number" min="1" max="999" value="1" autocomplete="off">
+
+            <label>C</label>
+            <input class="assistance-iv-spa" type="number" min="0" max="31" data-default-value="31">
+            <input class="assistance-ev-spa" type="number" min="0" max="252" step="4" data-default-value="0">
+            <div>
+              <input class="assistance-nature-plus-spa" type="checkbox" autocomplete="off">
+              <input class="assistance-nature-minus-spa" type="checkbox" autocomplete="off">
+            </div>
+            <input class="assistance-stat-spa" type="number" min="1" max="999" value="1" autocomplete="off">
+
+            <label>D</label>
+            <input class="assistance-iv-spd" type="number" min="0" max="31" data-default-value="31">
+            <input class="assistance-ev-spd" type="number" min="0" max="252" step="4" data-default-value="0">
+            <div>
+              <input class="assistance-nature-plus-spd" type="checkbox" autocomplete="off">
+              <input class="assistance-nature-minus-spd" type="checkbox" autocomplete="off">
+            </div>
+            <input class="assistance-stat-spd" type="number" min="1" max="999" value="1" autocomplete="off">
+
+            <label>S</label>
+            <input class="assistance-iv-spe" type="number" min="0" max="31" data-default-value="31">
+            <input class="assistance-ev-spe" type="number" min="0" max="252" step="4" data-default-value="0">
+            <div>
+              <input class="assistance-nature-plus-spe" type="checkbox" autocomplete="off">
+              <input class="assistance-nature-minus-spe" type="checkbox" autocomplete="off">
+            </div>
+            <input class="assistance-stat-spe" type="number" min="1" max="999" value="1" autocomplete="off">
+          </div>
+
+          <div class="row-flex">
+            <label>めざパ: <span class="assistance-hidden-power"></span></label>
+            <button class="hidden-power-option">候補</button>
+          </div>
+          <label>努力値計: <span class="assistance-ev-sum"></span> 余: <span class="assistance-ev-remaining"></span></label>
+          <label>性格: <span class="assistance-nature"></span></label>
+          <button class="assistance-copy-stats" title="ステータスをクリップボードにコピー">ステータスをコピー</button>
+
+          <fieldset>
+            <legend>代入</legend>
+            <div class="assistance-copy-container">
+              <button class="assistance-copy assistance-copy-atk-to-alpha">A → α</button>
+              <button class="assistance-copy assistance-copy-atk-to-beta">A → β</button>
+              <button class="assistance-copy assistance-copy-spa-to-alpha">C → α</button>
+              <button class="assistance-copy assistance-copy-spa-to-beta">C → β</button>
+              <button class="assistance-copy assistance-copy-hbd-to-i">HBD → I</button>
+              <button class="assistance-copy assistance-copy-hbd-to-ii">HBD → II</button>
+            </div>
+          </fieldset>
+        </div>
+
+        <div id="assistance2" class="tab-content">
+          <div class="grid">
+            <div class="autocomplete">
+              <label for="assistance2-pokemon-input">ポケモン</label>
+              <input id="assistance2-pokemon-input" class="assistance-pokemon-input" type="text"
+                placeholder="ポケモンを入力..." autocomplete="off" role="combobox" aria-autocomplete="list"
+                aria-controls="assistance2-pokemon-list" aria-expanded="false" />
+              <ul id="assistance2-pokemon-list" role="listbox" hidden></ul>
+            </div>
+
+            <label for="assistance2-level">レベル</label>
+            <input id="assistance2-level" class="assistance-level" type="number" min="1" max="100"
+              data-default-value="50">
+          </div>
+
+
+          <label>種族値: <span class="assistance-base-stats"></span></label>
+          <label>タイプ: <span class="assistance-types"></span></label>
+          <label>特性: <span class="assistance-abilities"></span></label>
+          <label>体重技威力: <span class="assistance-weight-move-power"></span></label>
+
+          <div class="assistance-stats">
+            <!-- レイアウト調整用の空のdiv -->
+            <div></div>
+            <label>個体値</label>
+            <label>努力値</label>
+            <label>性格</label>
+            <label>実数値</label>
+
+            <label>H</label>
+            <input class="assistance-iv-hp" type="number" min="0" max="31" data-default-value="31">
+            <input class="assistance-ev-hp" type="number" min="0" max="252" step="4" data-default-value="0">
+            <label>＋　－</label>
+            <input class="assistance-stat-hp" type="number" min="1" max="999" value="1" autocomplete="off">
+
+            <label>A</label>
+            <input class="assistance-iv-atk" type="number" min="0" max="31" data-default-value="31">
+            <input class="assistance-ev-atk" type="number" min="0" max="252" step="4" data-default-value="0">
+            <div>
+              <input class="assistance-nature-plus-atk" type="checkbox" autocomplete="off">
+              <input class="assistance-nature-minus-atk" type="checkbox" autocomplete="off">
+            </div>
+            <input class="assistance-stat-atk" type="number" min="1" max="999" value="1" autocomplete="off">
+
+            <label>B</label>
+            <input class="assistance-iv-def" type="number" min="0" max="31" data-default-value="31">
+            <input class="assistance-ev-def" type="number" min="0" max="252" step="4" data-default-value="0">
+            <div>
+              <input class="assistance-nature-plus-def" type="checkbox" autocomplete="off">
+              <input class="assistance-nature-minus-def" type="checkbox" autocomplete="off">
+            </div>
+            <input class="assistance-stat-def" type="number" min="1" max="999" value="1" autocomplete="off">
+
+            <label>C</label>
+            <input class="assistance-iv-spa" type="number" min="0" max="31" data-default-value="31">
+            <input class="assistance-ev-spa" type="number" min="0" max="252" step="4" data-default-value="0">
+            <div>
+              <input class="assistance-nature-plus-spa" type="checkbox" autocomplete="off">
+              <input class="assistance-nature-minus-spa" type="checkbox" autocomplete="off">
+            </div>
+            <input class="assistance-stat-spa" type="number" min="1" max="999" value="1" autocomplete="off">
+
+            <label>D</label>
+            <input class="assistance-iv-spd" type="number" min="0" max="31" data-default-value="31">
+            <input class="assistance-ev-spd" type="number" min="0" max="252" step="4" data-default-value="0">
+            <div>
+              <input class="assistance-nature-plus-spd" type="checkbox" autocomplete="off">
+              <input class="assistance-nature-minus-spd" type="checkbox" autocomplete="off">
+            </div>
+            <input class="assistance-stat-spd" type="number" min="1" max="999" value="1" autocomplete="off">
+
+            <label>S</label>
+            <input class="assistance-iv-spe" type="number" min="0" max="31" data-default-value="31">
+            <input class="assistance-ev-spe" type="number" min="0" max="252" step="4" data-default-value="0">
+            <div>
+              <input class="assistance-nature-plus-spe" type="checkbox" autocomplete="off">
+              <input class="assistance-nature-minus-spe" type="checkbox" autocomplete="off">
+            </div>
+            <input class="assistance-stat-spe" type="number" min="1" max="999" value="1" autocomplete="off">
+          </div>
+
+          <div class="row-flex">
+            <label>めざパ: <span class="assistance-hidden-power"></span></label>
+            <button class="hidden-power-option">候補</button>
+          </div>
+          <label>努力値計: <span class="assistance-ev-sum"></span> 余: <span class="assistance-ev-remaining"></span></label>
+          <label>性格: <span class="assistance-nature"></span></label>
+          <button class="assistance-copy-stats" title="ステータスをクリップボードにコピー">ステータスをコピー</button>
+
+          <fieldset>
+            <legend>代入</legend>
+            <div class="assistance-copy-container">
+              <button class="assistance-copy assistance-copy-atk-to-alpha">A → α</button>
+              <button class="assistance-copy assistance-copy-atk-to-beta">A → β</button>
+              <button class="assistance-copy assistance-copy-spa-to-alpha">C → α</button>
+              <button class="assistance-copy assistance-copy-spa-to-beta">C → β</button>
+              <button class="assistance-copy assistance-copy-hbd-to-i">HBD → I</button>
+              <button class="assistance-copy assistance-copy-hbd-to-ii">HBD → II</button>
+            </div>
+          </fieldset>
+        </div>
+      </div>
+
+      <div id="attack-tab-group" class="tab-group">
+        <div class="tab-buttons">
+          <button class="tab-button active" data-tab="attack-side1">攻撃側α</button>
+          <button class="tab-button" data-tab="attack-side2">攻撃側β</button>
+        </div>
+
+        <div id="attack-side1" class="tab-content active">
+          <div class="row-flex">
+            <div class="grid">
+              <div class="autocomplete">
+                <label for="attacker1-pokemon-input">ポケモン</label>
+                <input id="attacker1-pokemon-input" class="attacker-pokemon-input" type="text" placeholder="ポケモンを入力..."
+                  autocomplete="off" role="combobox" aria-autocomplete="list" aria-controls="attacker1-pokemon-list"
+                  aria-expanded="false" />
+                <ul id="attacker1-pokemon-list" role="listbox" hidden></ul>
+              </div>
+
+              <div class="autocomplete">
+                <label for="attacker1-ability-input">特性</label>
+                <input id="attacker1-ability-input" class="attacker-ability-input" type="text" placeholder="特性を入力..."
+                  autocomplete="off" role="combobox" aria-autocomplete="list" aria-controls="attacker1-ability-list"
+                  aria-expanded="false" />
+                <ul id="attacker1-ability-list" role="listbox" hidden></ul>
+              </div>
+
+              <div class="autocomplete">
+                <label for="attacker1-held-item-input">持ち物</label>
+                <input id="attacker1-held-item-input" class="attacker-held-item-input" type="text"
+                  placeholder="持ち物を入力..." autocomplete="off" role="combobox" aria-autocomplete="list"
+                  aria-controls="attacker1-held-item-list" aria-expanded="false" />
+                <ul id="attacker1-held-item-list" role="listbox" hidden></ul>
+              </div>
+
+              <label for="attacker1-ac-stat">AC</label>
+              <input id="attacker1-ac-stat" class="attacker-ac-stat" type="number" min="1" max="999" value="182"
+                autocomplete="off">
+
+              <label for="attacker1-ac-stage">ACランク</label>
+              <input id="attacker1-ac-stage" class="attacker-ac-stage" type="number" min="-6" max="6"
+                data-default-value="0">
+
+              <label for="attacker1-level">レベル</label>
+              <input id="attacker1-level" class="attacker-level" type="number" min="1" max="100"
+                data-default-value="50">
+
+              <label for="attacker1-critical-stage">急所ランク</label>
+              <div class="row-flex">
+                <input id="attacker1-critical-stage" class="attacker-critical-stage" type="number" min="-1" max="5"
+                  data-default-value="-1" title="-1: 0%, +5: 100%">
+
+                <label>
+                  <input id="attacker1-apply-critical-stage" class="attacker-apply-critical-stage" type="checkbox"
+                    autocomplete="off">適用
+                </label>
+              </div>
+            </div>
+
+            <div class="column-flex">
+              <div class="grid">
+                <div class="autocomplete">
+                  <label for="attacker1-move-input">技</label>
+                  <input id="attacker1-move-input" class="move-input" type="text" placeholder="技を入力..."
+                    autocomplete="off" role="combobox" aria-autocomplete="list" aria-controls="attacker1-move-list"
+                    aria-expanded="false" />
+                  <ul id="attacker1-move-list" role="listbox" hidden></ul>
+                </div>
+
+                <label for="attacker1-move-power">技威力</label>
+                <input id="attacker1-move-power" class="move-power" type="number" min="0" max="999" value="120"
+                  autocomplete="off">
+
+                <label for="attacker1-move-accuracy">技命中率</label>
+                <div class="row-flex">
+                  <input id="attacker1-move-accuracy" class="move-accuracy" type="number" min="0" max="100"
+                    data-default-value="100">
+
+                  <label>
+                    <input id="attacker1-apply-move-accuracy" class="apply-move-accuracy" type="checkbox"
+                      autocomplete="off">適用
+                  </label>
+                </div>
+
+                <label for="attacker1-move-type">技タイプ</label>
+                <select id="attacker1-move-type" class="move-type"></select>
+
+                <label>技分類</label>
+                <div>
+                  <label>
+                    <input class="move-category" type="radio" name="attacker1-move-category" value="ぶつり" checked>物理
+                  </label>
+                  <label>
+                    <input class="move-category" type="radio" name="attacker1-move-category" value="とくしゅ">特殊
+                  </label>
+                </div>
+
+                <label>タイプ相性</label>
+                <div class="row-flex">
+                  <select id="attacker1-move-type-effec1" class="move-type-effect"></select>
+                  <select id="attacker1-move-type-effec2" class="move-type-effect"></select>
+                </div>
+              </div>
+
+              <div class="row-flex">
+                <label title="タイプ一致補正: *1.5">
+                  <input id="attacker1-move-stab" class="move-stab" type="checkbox" autocomplete="off">タイプ一致
+                </label>
+
+                <label title="防御値: *0.5">
+                  <input id="attacker1-move-explosion" class="move-explosion" type="checkbox" autocomplete="off">爆発技
+                </label>
+
+                <div class="row-flex">
+                  <label title="プラス2前: *0.75">
+                    <input id="attacker1-move-ranged" class="move-ranged" type="checkbox" autocomplete="off">範囲技
+                  </label>
+                  <label>
+                    <input id="attacker1-apply-move-ranged" class="apply-move-ranged" type="checkbox"
+                      autocomplete="off">適用
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <details>
+            <summary>詳細</summary>
+            <div class="attacker-details">
+              <label title="プラス2後: *1.5">
+                <input id="attacker1-me-first" class="attacker-me-first" type="checkbox" data-multiplier="1.5"
+                  autocomplete="off">先取り
+              </label>
+
+              <label title="威力値(電気タイプ技): *2">
+                <input id="attacker1-charge" class="attacker-charge" type="checkbox" data-multiplier="2"
+                  autocomplete="off">充電
+              </label>
+
+              <label title="威力値: *1.5">
+                <input id="attacker1-helping-hand" class="attacker-helping-hand" type="checkbox" data-multiplier="1.5"
+                  autocomplete="off">手助け
+              </label>
+
+              <label title="攻撃値(A): *1.5">
+                <input id="attacker1-flower-gift" class="attacker-flower-gift" type="checkbox" data-multiplier="1.5"
+                  autocomplete="off">フラワーギフト
+              </label>
+
+              <label title="プラス2前(炎タイプ技): *1.5">
+                <input id="attacker1-flash-fire" class="attacker-flash-fire" type="checkbox" data-multiplier="1.5"
+                  autocomplete="off">貰い火
+              </label>
+
+              <label title="プラス2前(A): *0.5">
+                <input id="attacker1-burned" class="attacker-burned" type="checkbox" data-multiplier="0.5"
+                  autocomplete="off">火傷
+              </label>
+
+              <label title="プラス2前(炎・水タイプ技): *1.5">
+                <input id="attacker1-weather-plus" class="attacker-weather-plus" type="checkbox" data-multiplier="1.5"
+                  autocomplete="off">天候＋
+              </label>
+
+              <label title="プラス2前(炎・水タイプ技): *0.5">
+                <input id="attacker1-weather-minus" class="attacker-weather-minus" type="checkbox" data-multiplier="0.5"
+                  autocomplete="off">天候－
+              </label>
+            </div>
+          </details>
+        </div>
+
+        <div id="attack-side2" class="tab-content">
+          <div class="row-flex">
+            <div class="grid">
+              <div class="autocomplete">
+                <label for="attacker2-pokemon-input">ポケモン</label>
+                <input id="attacker2-pokemon-input" class="attacker-pokemon-input" type="text" placeholder="ポケモンを入力..."
+                  autocomplete="off" role="combobox" aria-autocomplete="list" aria-controls="attacker2-pokemon-list"
+                  aria-expanded="false" />
+                <ul id="attacker2-pokemon-list" role="listbox" hidden></ul>
+              </div>
+
+              <div class="autocomplete">
+                <label for="attacker2-ability-input">特性</label>
+                <input id="attacker2-ability-input" class="attacker-ability-input" type="text" placeholder="特性を入力..."
+                  autocomplete="off" role="combobox" aria-autocomplete="list" aria-controls="attacker2-ability-list"
+                  aria-expanded="false" />
+                <ul id="attacker2-ability-list" role="listbox" hidden></ul>
+              </div>
+
+              <div class="autocomplete">
+                <label for="attacker2-held-item-input">持ち物</label>
+                <input id="attacker2-held-item-input" class="attacker-held-item-input" type="text"
+                  placeholder="持ち物を入力..." autocomplete="off" role="combobox" aria-autocomplete="list"
+                  aria-controls="attacker2-held-item-list" aria-expanded="false" />
+                <ul id="attacker2-held-item-list" role="listbox" hidden></ul>
+              </div>
+
+              <label for="attacker2-ac-stat">AC</label>
+              <input id="attacker2-ac-stat" class="attacker-ac-stat" type="number" min="1" max="999" value="182"
+                autocomplete="off">
+
+              <label for="attacker2-ac-stage">ACランク</label>
+              <input id="attacker2-ac-stage" class="attacker-ac-stage" type="number" min="-6" max="6"
+                data-default-value="0">
+
+              <label for="attacker2-level">レベル</label>
+              <input id="attacker2-level" class="attacker-level" type="number" min="1" max="100"
+                data-default-value="50">
+
+              <label for="attacker2-critical-stage">急所ランク</label>
+              <div class="row-flex">
+                <input id="attacker2-critical-stage" class="attacker-critical-stage" type="number" min="-1" max="5"
+                  data-default-value="-1" title="-1: 0%, +5: 100%">
+
+                <label>
+                  <input id="attacker2-apply-critical-stage" class="attacker-apply-critical-stage" type="checkbox"
+                    autocomplete="off">適用
+                </label>
+              </div>
+            </div>
+
+            <div class="column-flex">
+              <div class="grid">
+                <div class="autocomplete">
+                  <label for="attacker2-move-input">技</label>
+                  <input id="attacker2-move-input" class="move-input" type="text" placeholder="技を入力..."
+                    autocomplete="off" role="combobox" aria-autocomplete="list" aria-controls="attacker2-move-list"
+                    aria-expanded="false" />
+                  <ul id="attacker2-move-list" role="listbox" hidden></ul>
+                </div>
+
+                <label for="attacker2-move-power">技威力</label>
+                <input id="attacker2-move-power" class="move-power" type="number" min="0" max="999" value="120"
+                  autocomplete="off">
+
+                <label for="attacker2-move-accuracy">技命中率</label>
+                <div class="row-flex">
+                  <input id="attacker2-move-accuracy" class="move-accuracy" type="number" min="0" max="100"
+                    data-default-value="100">
+
+                  <label>
+                    <input id="attacker2-apply-move-accuracy" class="apply-move-accuracy" type="checkbox"
+                      autocomplete="off">適用
+                  </label>
+                </div>
+
+                <label for="attacker2-move-type">技タイプ</label>
+                <select id="attacker2-move-type" class="move-type"></select>
+
+                <label>技分類</label>
+                <div>
+                  <label>
+                    <input class="move-category" type="radio" name="attacker2-move-category" value="ぶつり" checked>物理
+                  </label>
+                  <label>
+                    <input class="move-category" type="radio" name="attacker2-move-category" value="とくしゅ">特殊
+                  </label>
+                </div>
+
+                <label>タイプ相性</label>
+                <div class="row-flex">
+                  <select id="attacker2-move-type-effec1" class="move-type-effect"></select>
+                  <select id="attacker2-move-type-effec2" class="move-type-effect"></select>
+                </div>
+              </div>
+
+              <div class="row-flex">
+                <label title="タイプ一致補正: *1.5">
+                  <input id="attacker2-move-stab" class="move-stab" type="checkbox" autocomplete="off">タイプ一致
+                </label>
+
+                <label title="防御値: *0.5">
+                  <input id="attacker2-move-explosion" class="move-explosion" type="checkbox" autocomplete="off">爆発技
+                </label>
+
+                <div class="row-flex">
+                  <label title="プラス2前: *0.75">
+                    <input id="attacker2-move-ranged" class="move-ranged" type="checkbox" autocomplete="off">範囲技
+                  </label>
+                  <label>
+                    <input id="attacker2-apply-move-ranged" class="apply-move-ranged" type="checkbox"
+                      autocomplete="off">適用
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <details>
+            <summary>詳細</summary>
+            <div class="attacker-details">
+              <label title="プラス2後: *1.5">
+                <input id="attacker2-me-first" class="attacker-me-first" type="checkbox" data-multiplier="1.5"
+                  autocomplete="off">先取り
+              </label>
+
+              <label title="威力値(電気タイプ技): *2">
+                <input id="attacker2-charge" class="attacker-charge" type="checkbox" data-multiplier="2"
+                  autocomplete="off">充電
+              </label>
+
+              <label title="威力値: *1.5">
+                <input id="attacker2-helping-hand" class="attacker-helping-hand" type="checkbox" data-multiplier="1.5"
+                  autocomplete="off">手助け
+              </label>
+
+              <label title="攻撃値(A): *1.5">
+                <input id="attacker2-flower-gift" class="attacker-flower-gift" type="checkbox" data-multiplier="1.5"
+                  autocomplete="off">フラワーギフト
+              </label>
+
+              <label title="プラス2前(炎タイプ技): *1.5">
+                <input id="attacker2-flash-fire" class="attacker-flash-fire" type="checkbox" data-multiplier="1.5"
+                  autocomplete="off">貰い火
+              </label>
+
+              <label title="プラス2前(A): *0.5">
+                <input id="attacker2-burned" class="attacker-burned" type="checkbox" data-multiplier="0.5"
+                  autocomplete="off">火傷
+              </label>
+
+              <label title="プラス2前(炎・水タイプ技): *1.5">
+                <input id="attacker2-weather-plus" class="attacker-weather-plus" type="checkbox" data-multiplier="1.5"
+                  autocomplete="off">天候＋
+              </label>
+
+              <label title="プラス2前(炎・水タイプ技): *0.5">
+                <input id="attacker2-weather-minus" class="attacker-weather-minus" type="checkbox" data-multiplier="0.5"
+                  autocomplete="off">天候－
+              </label>
+            </div>
+          </details>
+        </div>
+      </div>
+
+      <div id="defense-tab-group" class="tab-group">
+        <div class="tab-buttons">
+          <button class="tab-button active" data-tab="defense-side1">防御側I</button>
+          <button class="tab-button" data-tab="defense-side2">防御側II</button>
+        </div>
+
+        <div id="defense-side1" class="tab-content active">
+          <div class="grid">
+            <div class="autocomplete">
+              <label for="defender1-pokemon-input">ポケモン</label>
+              <input id="defender1-pokemon-input" class="defender-pokemon-input" type="text" placeholder="ポケモンを入力..."
+                autocomplete="off" role="combobox" aria-autocomplete="list" aria-controls="defender1-pokemon-list"
+                aria-expanded="false" />
+              <ul id="defender1-pokemon-list" role="listbox" hidden></ul>
+            </div>
+
+            <div class="autocomplete">
+              <label for="defender1-ability-input">特性</label>
+              <input id="defender1-ability-input" class="defender-ability-input" type="text" placeholder="特性を入力..."
+                autocomplete="off" role="combobox" aria-autocomplete="list" aria-controls="defender1-ability-list"
+                aria-expanded="false" />
+              <ul id="defender1-ability-list" role="listbox" hidden></ul>
+            </div>
+
+            <div class="autocomplete">
+              <label for="defender1-held-item-input">持ち物</label>
+              <input id="defender1-held-item-input" class="defender-held-item-input" type="text" placeholder="持ち物を入力..."
+                autocomplete="off" role="combobox" aria-autocomplete="list" aria-controls="defender1-held-item-list"
+                aria-expanded="false" />
+              <ul id="defender1-held-item-list" role="listbox" hidden></ul>
+            </div>
+
+            <label for="defender1-hp-stat">H</label>
+            <input id="defender1-hp-stat" class="defender-hp-stat" type="number" min="1" max="999" value="183"
+              autocomplete="off">
+
+            <label for="defender1-def-stat">B</label>
+            <input id="defender1-def-stat" class="defender-def-stat" type="number" min="1" max="999" value="115"
+              autocomplete="off">
+
+            <label for="defendeer1-spd-stat">D</label>
+            <input id="defendeer1-spd-stat" class="defender-spd-stat" type="number" min="1" max="999" value="105"
+              autocomplete="off">
+
+            <label for="defender1-def-stage">Bランク</label>
+            <input id="defender1-def-stage" class="defender-def-stage" type="number" min="-6" max="6"
+              data-default-value="0">
+
+            <label for="defender1-spd-stage">Dランク</label>
+            <input id="defender1-spd-stage" class="defender-spd-stage" type="number" min="-6" max="6"
+              data-default-value="0">
+          </div>
+
+          <details>
+            <summary>詳細</summary>
+            <div class="defender-details">
+              <label title="防御値(D): *1.5">
+                <input id="defender1-sandstorm" class="defender-sandstorm" type="checkbox" data-multiplier="1.5"
+                  autocomplete="off">砂嵐
+              </label>
+
+              <label title="威力値(電気タイプ技): *0.5">
+                <input id="defender1-mud-sport" class="defender-mud-sport" type="checkbox" data-multiplier="0.5"
+                  autocomplete="off">泥遊び
+              </label>
+
+              <label title="威力値(炎タイプ技): *0.5">
+                <input id="defender1-water-sport" class="defender-water-sport" type="checkbox" data-multiplier="0.5"
+                  autocomplete="off">水遊び
+              </label>
+
+              <label title="防御値(D): *1.5">
+                <input id="defender1-flower-gift" class="defender-flower-gift" type="checkbox" data-multiplier="1.5"
+                  autocomplete="off">フラワーギフト
+              </label>
+
+              <label title="プラス2前: *0.5">
+                <input id="defender1-wall-single" class="defender-wall-single" type="checkbox" data-multiplier="0.5"
+                  autocomplete="off">壁(シングル)
+              </label>
+
+              <label title="プラス2前: *2/3">
+                <input id="defender1-wall-double" class="defender-wall-double" type="checkbox" data-multiplier="2/3"
+                  autocomplete="off">壁(ダブル)
+              </label>
+            </div>
+          </details>
+        </div>
+
+        <div id="defense-side2" class="tab-content">
+          <div class="grid">
+            <div class="autocomplete">
+              <label for="defender2-pokemon-input">ポケモン</label>
+              <input id="defender2-pokemon-input" class="defender-pokemon-input" type="text" placeholder="ポケモンを入力..."
+                autocomplete="off" role="combobox" aria-autocomplete="list" aria-controls="defender2-pokemon-list"
+                aria-expanded="false" />
+              <ul id="defender2-pokemon-list" role="listbox" hidden></ul>
+            </div>
+
+            <div class="autocomplete">
+              <label for="defender2-ability-input">特性</label>
+              <input id="defender2-ability-input" class="defender-ability-input" type="text" placeholder="特性を入力..."
+                autocomplete="off" role="combobox" aria-autocomplete="list" aria-controls="defender2-ability-list"
+                aria-expanded="false" />
+              <ul id="defender2-ability-list" role="listbox" hidden></ul>
+            </div>
+
+            <div class="autocomplete">
+              <label for="defender2-held-item-input">持ち物</label>
+              <input id="defender2-held-item-input" class="defender-held-item-input" type="text" placeholder="持ち物を入力..."
+                autocomplete="off" role="combobox" aria-autocomplete="list" aria-controls="defender2-held-item-list"
+                aria-expanded="false" />
+              <ul id="defender2-held-item-list" role="listbox" hidden></ul>
+            </div>
+
+            <label for="defender2-hp-stat">H</label>
+            <input id="defender2-hp-stat" class="defender-hp-stat" type="number" min="1" max="999" value="183"
+              autocomplete="off">
+
+            <label for="defender2-def-stat">B</label>
+            <input id="defender2-def-stat" class="defender-def-stat" type="number" min="1" max="999" value="115"
+              autocomplete="off">
+
+            <label for="defendeer1-spd-stat">D</label>
+            <input id="defendeer1-spd-stat" class="defender-spd-stat" type="number" min="1" max="999" value="105"
+              autocomplete="off">
+
+            <label for="defender2-def-stage">Bランク</label>
+            <input id="defender2-def-stage" class="defender-def-stage" type="number" min="-6" max="6"
+              data-default-value="0">
+
+            <label for="defender2-spd-stage">Dランク</label>
+            <input id="defender2-spd-stage" class="defender-spd-stage" type="number" min="-6" max="6"
+              data-default-value="0">
+          </div>
+
+          <details>
+            <summary>詳細</summary>
+            <div class="defender-details">
+              <label title="防御値(D): *1.5">
+                <input id="defender2-sandstorm" class="defender-sandstorm" type="checkbox" data-multiplier="1.5"
+                  autocomplete="off">砂嵐
+              </label>
+
+              <label title="威力値(電気タイプ技): *0.5">
+                <input id="defender2-mud-sport" class="defender-mud-sport" type="checkbox" data-multiplier="0.5"
+                  autocomplete="off">泥遊び
+              </label>
+
+              <label title="威力値(炎タイプ技): *0.5">
+                <input id="defender2-water-sport" class="defender-water-sport" type="checkbox" data-multiplier="0.5"
+                  autocomplete="off">水遊び
+              </label>
+
+              <label title="防御値(D): *1.5">
+                <input id="defender2-flower-gift" class="defender-flower-gift" type="checkbox" data-multiplier="1.5"
+                  autocomplete="off">フラワーギフト
+              </label>
+
+              <label title="プラス2前: *0.5">
+                <input id="defender2-wall-single" class="defender-wall-single" type="checkbox" data-multiplier="0.5"
+                  autocomplete="off">壁(シングル)
+              </label>
+
+              <label title="プラス2前: *2/3">
+                <input id="defender2-wall-double" class="defender-wall-double" type="checkbox" data-multiplier="2/3"
+                  autocomplete="off">壁(ダブル)
+              </label>
+            </div>
+          </details>
+        </div>
+      </div>
+
+      <div id="result-tab-group" class="tab-group">
+        <div class="tab-buttons">
+          <button class="tab-button active" data-tab="result">計算結果</button>
+          <button id="ac-vicinity-tab" class="tab-button" data-tab="ac-vicinity">AC周囲</button>
+          <button id="bd-vicinity-tab" class="tab-button" data-tab="bd-vicinity">BD周囲</button>
+          <button id="hbd-vicinity-tab" class="tab-button" data-tab="hbd-vicinity">HBD周囲</button>
+        </div>
+
+        <div id="result" class="tab-content active">
+          <div class="row-flex">
+            <div class="column-flex">
+              <label id="result-target">攻撃側αβ → 防御側III-BD</label>
+
+              <div class="hp-container">
+                <div class="hp-bar">
+                  <div class="hp-bar-fill" id="hp-bar-fill"></div>
+                </div>
+                <div id="hp-text"></div>
+              </div>
+
+              <label>ダメージ: <span id="damage"></span></label>
+              <label>割合: <span id="damage-ratio"></span></label>
+              <label>確定数: <span id="hits-to-knock-out"></span></label>
+              <label>急所ダメージ: <span id="critical-damage"></span></label>
+              <label>割合: <span id="critical-damage-ratio"></span></label>
+              <label>期待値: <span id="expected-value-damage"></span></label>
+            </div>
+
+            <div class="column-flex">
+              <fieldset>
+                <legend>威力値: <span id="power-legend"></span></legend>
+                <div id="power-modifiers"></div>
+              </fieldset>
+
+              <fieldset>
+                <legend>攻撃値: <span id="attack-legend"></span></legend>
+                <div id="attack-modifiers"></div>
+              </fieldset>
+
+              <fieldset>
+                <legend>防御値: <span id="defense-legend"></span></legend>
+                <div id="defense-modifiers"></div>
+              </fieldset>
+
+              <fieldset>
+                <legend>プラス2前補正</legend>
+                <div id="moddifier1-modifiers"></div>
+              </fieldset>
+
+              <fieldset>
+                <legend>プラス2後補正</legend>
+                <div id="moddifier2-modifiers"></div>
+              </fieldset>
+
+              <fieldset>
+                <legend>乱数後補正</legend>
+                <div id="moddifier3-modifiers"></div>
+              </fieldset>
+            </div>
+
+            <table id="raw-damage-table">
+              <thead>
+                <tr>
+                  <th>ダメージ</th>
+                  <th>確率</th>
+                  <th>急所</th>
+                  <th>確率</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div id="ac-vicinity" class="tab-content">
+          <table id="ac-vicinity-table" class="vicinity-table">
+            <thead>
+              <tr>
+                <th id="ac-vicinity-table-th">AC</th>
+                <th>85</th>
+                <th>86</th>
+                <th>87</th>
+                <th>88</th>
+                <th>89</th>
+                <th>90</th>
+                <th>91</th>
+                <th>92</th>
+                <th>93</th>
+                <th>94</th>
+                <th>95</th>
+                <th>96</th>
+                <th>97</th>
+                <th>98</th>
+                <th>99</th>
+                <th>100</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+
+        <div id="bd-vicinity" class="tab-content">
+          <table id="bd-vicinity-table" class="vicinity-table">
+            <thead>
+              <tr>
+                <th id="bd-vicinity-table-th">BD</th>
+                <th>85</th>
+                <th>86</th>
+                <th>87</th>
+                <th>88</th>
+                <th>89</th>
+                <th>90</th>
+                <th>91</th>
+                <th>92</th>
+                <th>93</th>
+                <th>94</th>
+                <th>95</th>
+                <th>96</th>
+                <th>97</th>
+                <th>98</th>
+                <th>99</th>
+                <th>100</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+
+        <div id="hbd-vicinity" class="tab-content">
+          <table id="hbd-vicinity-table">
+            <thead>
+              <tr>
+                <th>H</th>
+                <th id="hbd-vicinity-table-th">BD</th>
+                <th>85</th>
+                <th>86</th>
+                <th>87</th>
+                <th>88</th>
+                <th>89</th>
+                <th>90</th>
+                <th>91</th>
+                <th>92</th>
+                <th>93</th>
+                <th>94</th>
+                <th>95</th>
+                <th>96</th>
+                <th>97</th>
+                <th>98</th>
+                <th>99</th>
+                <th>100</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div id="constant" class="column-flex">
+        <fieldset>
+          <legend>固定変動</legend>
+          <div class="constant-container">
+            <label><input type="radio" name="constant" value="ratio" checked>割合</label>
+            <select id="constant-ratio"></select>
+            <label><input type="radio" name="constant" value="number">数値</label>
+            <input id="constant-number" type="number" data-default-value="50">
+          </div>
+          <div class="button-container">
+            <button id="constant-damage">ダメージ</button>
+            <button id="constant-heal">回復</button>
+          </div>
+        </fieldset>
+
+        <div>
+          <button id="add-damage">加算</button>
+          <div class="button-container">
+            <button id="undo-damage">戻る</button>
+            <button id="redo-damage">進む</button>
+            <button id="clear-damage">クリア</button>
+          </div>
+          <label title="ダメージ乱数の均等分布・不均等分布を切り替える">
+            <input id="even-distribution" type="checkbox" checked autocomplete="off">均等分布
+          </label>
+        </div>
+      </div>
+
+      <div id="damage-table-group" class="column-flex">
+        <div class="row-flex">
+          <div class="table-container">
+            <table id="damage-prob-table">
+              <thead>
+                <tr>
+                  <th>ダメージ</th>
+                  <th>確率</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+
+          <div class="table-container">
+            <table id="hp-prob-table">
+              <thead>
+                <tr>
+                  <th>残りHP</th>
+                  <th>確率</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+
+        <label for="damage-log">加算ログ</label>
+        <textarea id="damage-log" readonly autocomplete="off"></textarea>
+
+        <label for="for-attack-copy">攻撃側コピペ用テキスト</label>
+        <textarea id="for-attack-copy" readonly autocomplete="off"></textarea>
+
+        <label for="for-defense-copy">防御側コピペ用テキスト</label>
+        <textarea id="for-defense-copy" readonly autocomplete="off"></textarea>
+      </div>
+
+    </section>
+  </main>
+
+  <section id="how-to-use">
+    <h2>使い方</h2>
+    <ol>
+      <li>ポケモンタブでポケモン名や数値を入力して代入ボタンで攻撃側や防御側に代入する。<br>攻撃側タブや防御側タブに直接入力も可能。</li>
+      <li>技名を入力する。威力などを直接入力も可能。</li>
+      <li>その他細かい条件を入力する。</li>
+      <li>加算ボタンを押して加算結果を表示する。</li>
+    </ol>
+    <p>詳しくはこのブログ記事を読んでください。</p>
+    <a href="" class="ogp-card" target="_blank" rel="noopener noreferrer">
+      <img src="" alt="">
+      <div>
+        <h3 class="no-style">記事タイトル</h3>
+        <p>記事概要</p>
+        <small>tarakodragon.hatenablog.com</small>
+      </div>
+    </a> </section>
+
+      <section id="disclaimer">
+        <h2>免責事項</h2>
+        <h3>非公式サイトについて</h3>
+        <p>当ページは個人が制作した非公式のファンサイトです。株式会社ポケモンおよび関連企業とは一切関係ありません。</p>
+        <h3>ツールの利用について</h3>
+        <p>
+          当ページのツールは個人が制作したものであり、計算結果の正確性を保証するものではありません。計算式やデータ等に誤りが含まれている場合があります。ツールの利用および利用結果の判断は、すべて利用者ご自身の責任で行ってください。当ページのツールを利用したこと、または利用できなかったことによって生じたいかなる損害についても、制作者は責任を負いかねます。
+        </p>
+        <h3>内容の変更・公開停止について</h3>
+        <p>当ページは予告なく掲載内容の変更または公開の停止を行う場合があります。あらかじめご了承ください。</p>
+      </section>
+
+      <section id="reference">
+        <h2>参考</h2>
+        <h3>Smogon</h3>
+        <p>計算式を参考にしました。</p>
+        <a href="https://www.smogon.com/dp/articles/damage_formula" target="_blank" rel="noopener noreferrer">The
+          Complete Damage Formula for Diamond & Pearl - Smogon University</a>
+        <h3>ChatGPT</h3>
+        <p>プログラミングでわからないことを調べました。</p>
+        <a href="https://chatgpt.com/" target="_blank" rel="noopener noreferrer">ChatGPT - チャットGPT</a>
+      </section>
+
+      <section id="my-link">
+        <h2>作者リンク</h2>
+        <h3>ブログ</h3>
+        <a href="https://tarakodragon.hatenablog.com/" class="ogp-card" target="_blank" rel="noopener noreferrer">
+          <img src="images/blog.png" alt="">
+          <div>
+            <h4 class="no-style">たらこの「こう来たらこう！」</h4>
+            <p>昔のポケモン対戦考察を主にやっていきます。</p>
+            <small>tarakodragon.hatenablog.com</small>
+          </div>
+        </a>
+        <h3>X</h3>
+        <a href="https://x.com/tarakodragon" class="ogp-card" target="_blank" rel="noopener noreferrer">
+          <img src="images/x.png" alt="">
+          <div>
+            <h4 class="no-style">たらこドラゴン(弱) @tarakodragon</h4>
+            <p>X初心者で使い方わかってません、反応遅いです、優しくしてね<br>ゲーム（ポケモン4thGSや周辺世代、マイクラ、ポケポケ、ハートピアなど）、アニメ</p>
+            <small>x.com/tarakodragon</small>
+          </div>
+        </a>
+      </section>
+
+      <section id="changelog">
+        <h2>更新履歴</h2>
+        <p>2026/11/28 ver1.0.0 公開</p>
+      </section>
+
+      <div id="theme">
+        <label class="theme-label">
+          <span>ダークモード</span>
+          <input type="checkbox" id="theme-toggle">
+          <span class="toggle-switch"></span>
+        </label>
+      </div>
+
+      <dialog id="hidden-power-dialog">
+        <div class="column-flex">
+          <p>めざめるパワーの個体値設定</p>
+
+          <div class="row-flex">
+            <label for="hidden-power-type">タイプ</label>
+            <select id="hidden-power-type"></select>
+            <label><input id="hidden-power-min-atk" type="checkbox" checked>A最小</label>
+            <label><input id="hidden-power-min-spe" type="checkbox">S最小</label>
+          </div>
+
+          <div class="row-flex">
+            <label>候補</label>
+            <select id="hidden-power-iv-option"></select>
+          </div>
+
+          <button id="hidden-power-confirm">決定</button>
+          <button id="hidden-power-cancel">キャンセル</button>
+        </div>
+      </dialog>
+
+      <script src="script.js"></script>
+</body>
+
+</html>
