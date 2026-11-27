@@ -12603,6 +12603,10 @@ function addDamage(damageProbs, log) {
 
   updateDamageProbTable();
   updateDamageLog();
+
+  if (typeof gtag === "function") {
+    gtag("event", "add_damage");
+  }
 }
 
 function clearDamage() {
@@ -12612,7 +12616,6 @@ function clearDamage() {
   updateDamageProbTable();
   updateDamageLog();
 }
-
 
 function saveHistory() {
   // Undo後に新しい操作をした場合、未来の履歴を削除する
