@@ -9838,6 +9838,60 @@ function initializeApp() {
     });
   });
 
+  document.querySelectorAll(".attacker-weather-plus").forEach(plus => {
+    plus.addEventListener("change", (event) => {
+      if (plus.checked) {
+        const tab = event.currentTarget.closest(".tab-content");
+        tab.querySelector(".attacker-weather-minus").checked = false;
+      }
+    });
+  });
+
+  document.querySelectorAll(".attacker-weather-minus").forEach(minus => {
+    minus.addEventListener("change", (event) => {
+      if (minus.checked) {
+        const tab = event.currentTarget.closest(".tab-content");
+        tab.querySelector(".attacker-weather-plus").checked = false;
+      }
+    });
+  });
+
+  document.querySelectorAll(".defender-sandstorm").forEach(sandstorm => {
+    sandstorm.addEventListener("change", (event) => {
+      if (sandstorm.checked) {
+        const tab = event.currentTarget.closest(".tab-content");
+        tab.querySelector(".defender-flower-gift").checked = false;
+      }
+    });
+  });
+
+  document.querySelectorAll(".defender-flower-gift").forEach(flowerGift => {
+    flowerGift.addEventListener("change", (event) => {
+      if (flowerGift.checked) {
+        const tab = event.currentTarget.closest(".tab-content");
+        tab.querySelector(".defender-sandstorm").checked = false;
+      }
+    });
+  });
+  
+  document.querySelectorAll(".defender-wall-single").forEach(wallSingle => {
+    wallSingle.addEventListener("change", (event) => {
+      if (wallSingle.checked) {
+        const tab = event.currentTarget.closest(".tab-content");
+        tab.querySelector(".defender-wall-double").checked = false;
+      }
+    });
+  });
+  
+  document.querySelectorAll(".defender-wall-double").forEach(wallDouble => {
+    wallDouble.addEventListener("change", (event) => {
+      if (wallDouble.checked) {
+        const tab = event.currentTarget.closest(".tab-content");
+        tab.querySelector(".defender-wall-single").checked = false;
+      }
+    });
+  });
+
   document.querySelectorAll(".tab-button").forEach(button => {
     button.addEventListener("click", () => {
       updateResult();
